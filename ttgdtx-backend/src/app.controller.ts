@@ -11,7 +11,10 @@ import { AuthorizationGuard } from './guards/authorization.guard';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Permissions([{ resource: Resource.products, actions: [Action.read] }])
+  @Permissions([
+    { resource: Resource.products, actions: [Action.read, Action.create] },
+    { resource: Resource.settings, actions: [Action.read] },
+  ])
   @Get()
   someProtectedRoute(@Req() req) {
     return { message: 'Accessed Resource', userId: req.userId };

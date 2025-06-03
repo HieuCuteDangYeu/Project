@@ -7,7 +7,7 @@ import {
   RefreshToken,
   RefreshTokenSchema,
 } from './schemas/refresh-token.schema';
-import { ResetToken, ResetTokenSchema } from './dto/reset-token.dto';
+import { ResetToken, ResetTokenSchema } from './schemas/reset-token.schema';
 import { MailService } from 'src/services/mail.service';
 
 @Module({

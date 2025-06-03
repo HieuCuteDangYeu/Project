@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -13,7 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/schemas/user.schema';
 import { RefreshToken } from './schemas/refresh-token.schema';
 import { v4 as uuidv4 } from 'uuid';
-import { ResetToken } from './dto/reset-token.dto';
+import { ResetToken } from './schemas/reset-token.schema';
 import { nanoid } from 'nanoid';
 import { MailService } from 'src/services/mail.service';
 
@@ -136,15 +137,42 @@ export class AuthService {
       expiryDate.setHours(expiryDate.getHours() + 1);
 
       const resetToken = nanoid(64);
-      await this.ResetTokenModel.create({
-        token: resetToken,
-        userId: user._id,
-        expiryDate,
-      });
+      await this.ResetTokenModel.updateOne(
+        {
+          userId: user._id,
+        },
+        {
+          $set: { expiryDate, token: resetToken },
+        },
+        {
+          upsert: true,
+        },
+      );
       //Send the link to the user by email
       await this.mailService.sendPasswordResetEmail(email, resetToken);
     }
 
     return { message: 'If this user exists, they will receive an email' };
+  }
+
+  async resetPassword(newPassword: string, resetToken: string) {
+    //Find a valid reset token document
+    const token = await this.ResetTokenModel.findOneAndDelete({
+      token: resetToken,
+      expiryDate: { $gte: new Date() },
+    });
+
+    if (!token) {
+      throw new UnauthorizedException('Invalid link');
+    }
+
+    //Change user password (MAKE SURE TO HASH!!)
+    const user = await this.UserModel.findById(token.userId);
+    if (!user) {
+      throw new InternalServerErrorException();
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
   }
 }

@@ -46,7 +46,7 @@ export class AuthorizationGuard implements CanActivate {
         );
         if (!allActionsAvailable) throw new ForbiddenException();
       }
-    } catch (e) {
+    } catch {
       throw new ForbiddenException();
     }
 

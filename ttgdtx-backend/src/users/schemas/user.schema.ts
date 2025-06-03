@@ -15,10 +15,10 @@ export class User {
   email: string;
 
   @Prop({ required: true, trim: true })
-  username: string;
+  name: string;
 
   @Prop({ required: true })
-  password_hash: string; // Store hashed password
+  password: string; // Store hashed password
 
   @Prop({ type: [String], enum: UserRole, default: [UserRole.USER] })
   roles: UserRole[];

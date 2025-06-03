@@ -1,23 +1,39 @@
 import { Module } from '@nestjs/common';
-import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
-import { PostsService } from './posts/posts.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './auth/auth.module';
+import config from './config/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
       isGlobal: true,
+      cache: true,
+      load: [config],
     }),
-    MongooseModule.forRoot(
-      process.env.DATABASE_URI || 'mongodb://localhost:27017',
-    ),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (config) => ({
+        secret: config.get('jwt.secret'),
+      }),
+      global: true,
+      inject: [ConfigService],
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (config) => ({
+        uri: config.get('database.connectionString'),
+      }),
+      inject: [ConfigService],
+    }),
     UsersModule,
-    PostsModule,
+    AuthModule,
   ],
-  controllers: [],
-  providers: [PostsService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

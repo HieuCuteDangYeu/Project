@@ -1,11 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-
-export enum UserRole {
-  ADMIN = 'admin',
-  EDITOR = 'editor',
-  USER = 'user',
-}
+import { Document, SchemaTypes, Types } from 'mongoose';
 
 export type UserDocument = User & Document;
 
@@ -20,8 +14,8 @@ export class User {
   @Prop({ required: true })
   password: string; // Store hashed password
 
-  @Prop({ type: [String], enum: UserRole, default: [UserRole.USER] })
-  roles: UserRole[];
+  @Prop({ required: false, type: SchemaTypes.ObjectId })
+  roleId: Types.ObjectId;
 
   // Timestamps (createdAt, updatedAt) are automatically added by @Schema({ timestamps: true })
 }

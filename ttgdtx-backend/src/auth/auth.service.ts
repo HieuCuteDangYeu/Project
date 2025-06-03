@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ResetToken } from './schemas/reset-token.schema';
 import { nanoid } from 'nanoid';
 import { MailService } from 'src/services/mail.service';
+import { RolesService } from 'src/roles/roles.service';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,7 @@ export class AuthService {
     private ResetTokenModel: Model<ResetToken>,
     private jwtService: JwtService,
     private readonly mailService: MailService,
+    private rolesService: RolesService,
   ) {}
 
   async signup(signUpDto: SignUpDto) {
@@ -174,5 +176,14 @@ export class AuthService {
 
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
+  }
+  
+  async getUserPermissions(userId: string) {
+    const user = await this.UserModel.findById(userId);
+
+    if (!user) throw new BadRequestException();
+
+    const role = await this.rolesService.getRoleById(user.roleId.toString());
+    return role?.permissions;
   }
 }

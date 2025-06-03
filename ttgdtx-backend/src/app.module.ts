@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import config from './config/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { RolesModule } from './roles/roles.module';
 
 @Module({
@@ -18,7 +19,7 @@ import { RolesModule } from './roles/roles.module';
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (config) => ({
+      useFactory: (config: ConfigService) => ({
         secret: config.get('jwt.secret'),
       }),
       global: true,
@@ -26,13 +27,26 @@ import { RolesModule } from './roles/roles.module';
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config) => ({
+      useFactory: (config: ConfigService) => ({
         uri: config.get('database.connectionString'),
       }),
       inject: [ConfigService],
     }),
     UsersModule,
     AuthModule,
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        transport: {
+          host: config.get<string>('email.host'),
+          auth: {
+            user: config.get<string>('email.username'),
+            pass: config.get<string>('email.password'),
+          },
+        },
+      }),
+      inject: [ConfigService],
+    }),
     RolesModule,
   ],
   controllers: [AppController],

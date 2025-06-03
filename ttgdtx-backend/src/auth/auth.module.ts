@@ -7,9 +7,11 @@ import {
   RefreshToken,
   RefreshTokenSchema,
 } from './schemas/refresh-token.schema';
+import { RolesModule } from 'src/roles/roles.module';
 
 @Module({
   imports: [
+    RolesModule,
     MongooseModule.forFeature([
       {
         name: User.name,
@@ -23,5 +25,6 @@ import {
   ],
   controllers: [AuthController],
   providers: [AuthService],
+  exports: [AuthService],
 })
 export class AuthModule {}

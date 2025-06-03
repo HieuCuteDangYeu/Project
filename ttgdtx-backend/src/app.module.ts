@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import config from './config/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { AppService } from './app.service';
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (config) => ({
+      useFactory: (config: ConfigService) => ({
         secret: config.get('jwt.secret'),
       }),
       global: true,
@@ -25,13 +26,26 @@ import { AppService } from './app.service';
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config) => ({
+      useFactory: (config: ConfigService) => ({
         uri: config.get('database.connectionString'),
       }),
       inject: [ConfigService],
     }),
     UsersModule,
     AuthModule,
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        transport: {
+          host: config.get<string>('email.host'),
+          auth: {
+            user: config.get<string>('email.username'),
+            pass: config.get<string>('email.password'),
+          },
+        },
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

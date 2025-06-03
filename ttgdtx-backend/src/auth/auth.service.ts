@@ -177,7 +177,7 @@ export class AuthService {
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
   }
-  
+
   async getUserPermissions(userId: string) {
     const user = await this.UserModel.findById(userId);
 

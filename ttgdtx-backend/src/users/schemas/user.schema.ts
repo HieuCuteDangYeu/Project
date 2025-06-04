@@ -16,8 +16,6 @@ export class User {
 
   @Prop({ required: false, type: SchemaTypes.ObjectId })
   roleId: Types.ObjectId;
-
-  // Timestamps (createdAt, updatedAt) are automatically added by @Schema({ timestamps: true })
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

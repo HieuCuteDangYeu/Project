@@ -110,7 +110,11 @@ export class AuthService {
     );
   }
 
-  async changePassword(userId, oldPassword: string, newPassword: string) {
+  async changePassword(
+    userId: mongoose.Types.ObjectId,
+    oldPassword: string,
+    newPassword: string,
+  ) {
     //Find the user
     const user = await this.UserModel.findById(userId);
     if (!user) {
@@ -178,7 +182,7 @@ export class AuthService {
     await user.save();
   }
 
-  async getUserPermissions(userId: string) {
+  async getUserPermissions(userId: mongoose.Types.ObjectId) {
     const user = await this.UserModel.findById(userId);
 
     if (!user) throw new BadRequestException();

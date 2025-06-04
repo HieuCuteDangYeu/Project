@@ -7,7 +7,12 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { Request } from 'express';
+import mongoose from 'mongoose';
 
+interface AuthenticatedRequest extends Request {
+  userId: mongoose.Types.ObjectId;
+}
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -31,7 +36,7 @@ export class AuthController {
   @Put('change-password')
   async changePassword(
     @Body() changePasswordDto: ChangePasswordDto,
-    @Req() req,
+    @Req() req: AuthenticatedRequest,
   ) {
     return this.authService.changePassword(
       req.userId,

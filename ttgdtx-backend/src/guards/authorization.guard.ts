@@ -7,7 +7,18 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthService } from 'src/auth/auth.service';
+import { Request } from 'express';
 import { PERMISSIONS_KEY } from 'src/decorators/permissions.decorator';
+import { Resource } from 'src/roles/enums/resource.enum';
+import { Action } from 'src/roles/enums/action.enum';
+import mongoose from 'mongoose';
+interface RoutePermission {
+  resource: Resource;
+  actions: Action[];
+}
+interface AuthenticatedRequest extends Request {
+  userId: mongoose.Types.ObjectId;
+}
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
@@ -16,16 +27,17 @@ export class AuthorizationGuard implements CanActivate {
     private authService: AuthService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = await context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
     if (!request.userId) {
       throw new UnauthorizedException('User Id not found');
     }
 
-    const routePermissions = this.reflector.getAllAndOverride(PERMISSIONS_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const routePermissions: RoutePermission[] =
+      this.reflector.getAllAndOverride(PERMISSIONS_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ]);
 
     try {
       const userPermissions = await this.authService.getUserPermissions(
@@ -40,7 +52,8 @@ export class AuthorizationGuard implements CanActivate {
         if (!userPermission) throw new ForbiddenException();
 
         const allActionsAvailable = routePermission.actions.every(
-          (requiredAction) => userPermission.actions.includes(requiredAction),
+          (requiredAction: Action) =>
+            userPermission.actions.includes(requiredAction),
         );
         if (!allActionsAvailable) throw new ForbiddenException();
       }

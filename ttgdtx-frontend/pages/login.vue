@@ -73,6 +73,7 @@
             <!-- Forgot Password -->
             <div class="text-left">
               <Button 
+                type="button"
                 variant="link" 
                 class="p-0 h-auto font-normal text-blue-600 hover:text-blue-800 underline"
                 @click="handleForgotPassword"
@@ -178,17 +179,14 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
 import { Eye, EyeOff, Loader } from 'lucide-vue-next'
+import { useNuxtApp, useRouter } from 'nuxt/app'
+import type { AxiosInstance, AxiosResponse } from 'axios'
 
 // Types
 interface AuthResponse {
-  success: boolean
-  token?: string
-  user?: {
-    id: string
-    email: string
-    name: string
-  }
-  error?: string
+  accessToken: string
+  refreshToken: string
+  userId: string
 }
 
 // Validation schema
@@ -229,44 +227,26 @@ const onSubmit = handleSubmit(async (values: LoginFormData) => {
   isLoading.value = true
   
   try {
-    // Simulate API call
-    await new Promise<void>((resolve) => setTimeout(resolve, 2000))
+    const $api = useNuxtApp().$api as AxiosInstance
     
-    // Mock API response
-    const response: AuthResponse = {
-      success: true,
-      token: 'mock-jwt-token',
-      user: {
-        id: '123',
-        email: values.email,
-        name: 'John Doe'
-      }
-    }
-    
-    console.log('Login attempt:', { 
-      email: values.email, 
-      password: '***',
-      response 
+    // Call authentication API
+    const response : AxiosResponse<AuthResponse> = await $api.post('/auth/login', {
+      email: values.email,
+      password: values.password
     })
     
-    // In a real app, you would:
-    // - Call your authentication API
-    // - Handle the response
-    // - Redirect to dashboard or home page
-    // - Store authentication tokens
-    // - Update global auth state
-    
-    if (response.success) {
-      alert('Login successful! (This is just a demo)')
-      // await navigateTo('/dashboard')
-    } else {
-      throw new Error(response.error || 'Login failed')
+    // Handle successful login
+    if (response.data) {
+      // Store authentication data if needed
+      // Example: await $auth.setUser(response.data.user)
+      // Example: await $auth.setToken(response.data.token)
+      
+      const router = useRouter()
+      router.push('/')
     }
     
-  } catch (error: unknown) {
-    console.error('Login error:', error)
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-    alert(`Login failed: ${errorMessage}`)
+  } catch (error: any) {
+    console.log(error)
   } finally {
     isLoading.value = false
   }

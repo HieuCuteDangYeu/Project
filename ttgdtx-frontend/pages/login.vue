@@ -143,15 +143,9 @@ const [email] = defineField('email')
 const [password] = defineField('password')
 
 // UI state
-const showPassword = ref(false)
 const isLoading = ref(false)
 
 const router = useRouter()
-
-// Form handlers
-const togglePassword = (): void => {
-  showPassword.value = !showPassword.value
-}
 
 const onSubmit = handleSubmit(async (values: LoginFormData) => {
   isLoading.value = true

@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios from 'axios'
 
-export default defineNuxtPlugin((nuxtApp) => {
-  const defaultUrl = "http://localhost:8080";
+export default defineNuxtPlugin(() => {
+  const defaultUrl = 'http://localhost:8080'
   const api = axios.create({
     baseURL: defaultUrl,
     headers: {
@@ -10,34 +10,34 @@ export default defineNuxtPlugin((nuxtApp) => {
         'Accept': 'application/json',
       },
     },
-  });
+  })
 
   // Request interceptor
   api.interceptors.request.use(
     (config) => {
       // You can add auth tokens here if needed
       // config.headers.Authorization = `Bearer ${token}`;
-      return config;
+      return config
     },
     (error) => {
-      return Promise.reject(error);
-    }
-  );
+      return Promise.reject(error)
+    },
+  )
 
   // Response interceptor
   api.interceptors.response.use(
     (response) => {
-      return response;
+      return response
     },
     (error) => {
-      console.error('API Error:', error);
-      return Promise.reject(error);
-    }
-  );
+      console.error('API Error:', error)
+      return Promise.reject(error)
+    },
+  )
 
   return {
     provide: {
       api,
     },
-  };
-});
+  }
+})

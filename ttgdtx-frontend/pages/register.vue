@@ -9,21 +9,24 @@
     />
 
     <!-- Signup Form -->
-    <form @submit="onSubmit" class="space-y-4">
+    <form
+      class="space-y-4"
+      @submit="onSubmit"
+    >
       <!-- Name Input -->
       <AuthInput
         id="name"
+        v-model="name"
         label="Username"
         placeholder="Username"
-        v-model="name"
         :error="errors.name"
       />
       <!-- Email Input -->
       <AuthInput
         id="email"
+        v-model="email"
         label="Email address"
         placeholder="Email address"
-        v-model="email"
         type="email"
         :error="errors.email"
       />
@@ -31,9 +34,9 @@
       <!-- Password Input -->
       <AuthInput
         id="password"
+        v-model="password"
         label="Password"
         placeholder="Password"
-        v-model="password"
         type="password"
         :error="errors.password"
       />
@@ -41,9 +44,9 @@
       <!-- Confirm Password Input -->
       <AuthInput
         id="confirmPassword"
+        v-model="confirmPassword"
         label="Confirm Password"
         placeholder="Confirm Password"
-        v-model="confirmPassword"
         type="password"
         :error="errors.confirmPassword"
       />
@@ -51,30 +54,33 @@
       <!-- Terms Checkbox -->
       <div class="space-y-2">
         <div class="flex items-start space-x-3">
-            <div class="mr-2">
-                <input
-                    id="agreeToTerms"
-                    v-model="agreeToTerms"
-                    type="checkbox"
-                    class="h-5 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    :class="{ 'border-red-500': errors.agreeToTerms }"
-                />
-            </div>
-          
-          <label for="agreeToTerms" class="text-xs text-gray-700 leading-relaxed">
-            I understand CNN and its 
-            <Button 
+          <div class="mr-2">
+            <input
+              id="agreeToTerms"
+              v-model="agreeToTerms"
+              type="checkbox"
+              class="h-5 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              :class="{ 'border-red-500': errors.agreeToTerms }"
+            >
+          </div>
+
+          <label
+            for="agreeToTerms"
+            class="text-xs text-gray-700 leading-relaxed"
+          >
+            I understand CNN and its
+            <Button
               type="button"
-              variant="link" 
+              variant="link"
               class="p-0 h-auto text-xs underline text-blue-600 hover:text-blue-800"
               @click="handleAffiliatesClick"
             >
               affiliates
             </Button>
-            may use my email address to provide updates, ads, and offers. I can opt out via the 
-            <Button 
+            may use my email address to provide updates, ads, and offers. I can opt out via the
+            <Button
               type="button"
-              variant="link" 
+              variant="link"
               class="p-0 h-auto text-xs underline text-blue-600 hover:text-blue-800"
               @click="handlePrivacyClick"
             >
@@ -83,16 +89,24 @@
             .
           </label>
         </div>
-        <p v-if="errors.agreeToTerms" class="text-red-500 text-xs">{{ errors.agreeToTerms }}</p>
+        <p
+          v-if="errors.agreeToTerms"
+          class="text-red-500 text-xs"
+        >
+          {{ errors.agreeToTerms }}
+        </p>
       </div>
 
       <!-- Sign Up Button -->
-      <Button 
-        type="submit" 
+      <Button
+        type="submit"
         class="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
         :disabled="isLoading"
       >
-        <Loader v-if="isLoading" class="h-4 w-4 mr-2 animate-spin" />
+        <Loader
+          v-if="isLoading"
+          class="h-4 w-4 mr-2 animate-spin"
+        />
         {{ isLoading ? 'Creating account...' : 'Sign up' }}
       </Button>
     </form>
@@ -118,7 +132,7 @@ import type { AxiosInstance } from 'axios'
 import { ref } from 'vue'
 
 interface SignupRequest {
-  name: string,
+  name: string
   email: string
   password: string
 }
@@ -137,16 +151,16 @@ const signupSchema = z.object({
     .min(6, 'Password must be at least 6 characters')
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+      'Password must contain at least one uppercase letter, one lowercase letter, and one number',
     ),
   confirmPassword: z
     .string({ required_error: 'Please confirm your password' }),
   agreeToTerms: z
     .boolean()
-    .refine(val => val === true, 'You must agree to the terms to continue')
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"]
+    .refine(val => val === true, 'You must agree to the terms to continue'),
+}).refine(data => data.password === data.confirmPassword, {
+  message: 'Passwords don\'t match',
+  path: ['confirmPassword'],
 })
 
 type SignupFormData = z.infer<typeof signupSchema>
@@ -159,8 +173,8 @@ const { handleSubmit, errors, defineField } = useForm({
     email: '',
     password: '',
     confirmPassword: '',
-    agreeToTerms: false
-  }
+    agreeToTerms: false,
+  },
 })
 
 // Form fields
@@ -177,29 +191,31 @@ const router = useRouter()
 // Form handlers
 const onSubmit = handleSubmit(async (values: SignupFormData) => {
   isLoading.value = true
-  
+
   try {
     const $api = useNuxtApp().$api as AxiosInstance
-    
+
     const signupData: SignupRequest = {
       name: values.name,
       email: values.email,
-      password: values.password
+      password: values.password,
     }
-    
+
     // Call signup API
     await $api.post('/auth/signup', signupData)
-    
+
     // Handle successful signup
-      // Store authentication data if needed
-      // Example: await $auth.setUser(response.data.user)
-      // Example: await $auth.setToken(response.data.accessToken)
-      
-      // Show success message or redirect
-      router.push('/')
-  } catch (error: any) {
+    // Store authentication data if needed
+    // Example: await $auth.setUser(response.data.user)
+    // Example: await $auth.setToken(response.data.accessToken)
+
+    // Show success message or redirect
+    router.push('/')
+  }
+  catch (error: any) {
     console.log(error)
-  } finally {
+  }
+  finally {
     isLoading.value = false
   }
 })
@@ -214,7 +230,8 @@ const handleGoogleLogin = async (): Promise<void> => {
   try {
     console.log('Google login initiated')
     alert('Google login initiated (demo)')
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     console.error('Google login error:', error)
     alert('Google login failed')
   }
@@ -224,7 +241,8 @@ const handleAppleLogin = async (): Promise<void> => {
   try {
     console.log('Apple login initiated')
     alert('Apple login initiated (demo)')
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     console.error('Apple login error:', error)
     alert('Apple login failed')
   }

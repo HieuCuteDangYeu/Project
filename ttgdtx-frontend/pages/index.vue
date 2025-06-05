@@ -52,7 +52,6 @@ interface Product {
   id: number
   name: string
   price: number
-  [key: string]: any
 }
 
 export default defineComponent({
@@ -73,7 +72,7 @@ export default defineComponent({
         const response: AxiosResponse<Product[]> = await $api.get('/products')
         products.value = response.data
       }
-      catch (err: any) {
+      catch (err: unknown) {
         console.log(err)
       }
       finally {

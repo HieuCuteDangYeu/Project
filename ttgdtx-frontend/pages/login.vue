@@ -112,7 +112,7 @@ import { ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
-import { Eye, EyeOff, Loader } from 'lucide-vue-next'
+import { Loader } from 'lucide-vue-next'
 import { useNuxtApp, useRouter } from 'nuxt/app'
 import type { AxiosInstance, AxiosResponse } from 'axios'
 
@@ -173,7 +173,7 @@ const onSubmit = handleSubmit(async (values: LoginFormData) => {
       router.push('/')
     }
   }
-  catch (error: any) {
+  catch (error: unknown) {
     console.log(error)
   }
   finally {

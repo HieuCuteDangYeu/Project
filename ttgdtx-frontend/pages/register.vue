@@ -212,7 +212,7 @@ const onSubmit = handleSubmit(async (values: SignupFormData) => {
     // Show success message or redirect
     router.push('/')
   }
-  catch (error: any) {
+  catch (error: unknown) {
     console.log(error)
   }
   finally {

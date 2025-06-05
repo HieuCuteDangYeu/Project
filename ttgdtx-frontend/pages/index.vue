@@ -1,7 +1,24 @@
 <template>
   <div class="p-8">
     <div class="space-y-4">
-      <h1 class="text-2xl font-bold">
+      <div
+        v-if="isAuthenticated()"
+        class="flex justify-between items-center"
+      >
+        <h1 class="text-2xl font-bold">
+          Welcome, User!
+        </h1>
+        <Button
+          variant="outline"
+          @click="logout"
+        >
+          Logout
+        </Button>
+      </div>
+      <h1
+        v-else
+        class="text-2xl font-bold"
+      >
         Product Fetcher
       </h1>
 
@@ -45,7 +62,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, type Ref } from 'vue'
-import { useNuxtApp } from 'nuxt/app'
+import { useCookie, useNuxtApp, useRouter } from 'nuxt/app'
 import type { AxiosResponse, AxiosInstance } from 'axios'
 
 interface Product {
@@ -59,10 +76,22 @@ export default defineComponent({
   setup() {
     const nuxtApp = useNuxtApp()
     const $api = nuxtApp.$api as AxiosInstance
+    const router = useRouter()
 
     const products: Ref<Product[]> = ref([])
     const loading: Ref<boolean> = ref(false)
     const error: Ref<string> = ref('')
+
+    const isAuthenticated = () => !!useCookie('accessToken').value
+
+    const logout = async () => {
+      // Clear cookies
+      useCookie('accessToken', { secure: true }).value = null
+      useCookie('refreshToken', { secure: true }).value = null
+      useCookie('userId', { secure: true }).value = null
+
+      await router.push('/login')
+    }
 
     const fetchProducts = async (): Promise<void> => {
       loading.value = true
@@ -91,6 +120,8 @@ export default defineComponent({
       error,
       fetchProducts,
       clearProducts,
+      isAuthenticated,
+      logout,
     }
   },
 })

@@ -1,23 +1,40 @@
 <template>
   <div class="p-8">
     <div class="space-y-4">
-      <h1 class="text-2xl font-bold">Product Fetcher</h1>
-      
+      <h1 class="text-2xl font-bold">
+        Product Fetcher
+      </h1>
+
       <div class="flex gap-4">
-        <Button @click="fetchProducts" :disabled="loading">
+        <Button
+          :disabled="loading"
+          @click="fetchProducts"
+        >
           {{ loading ? 'Loading...' : 'Fetch Products' }}
         </Button>
-        <Button @click="clearProducts" variant="outline" v-if="products.length > 0">
+        <Button
+          v-if="products.length > 0"
+          variant="outline"
+          @click="clearProducts"
+        >
           Clear
         </Button>
       </div>
 
-      <div v-if="error" class="text-red-500 p-4 border border-red-200 rounded">
+      <div
+        v-if="error"
+        class="text-red-500 p-4 border border-red-200 rounded"
+      >
         <strong>Error:</strong> {{ error }}
       </div>
 
-      <div v-if="products.length > 0" class="space-y-2">
-        <h2 class="text-lg font-semibold">Products ({{ products.length }}):</h2>
+      <div
+        v-if="products.length > 0"
+        class="space-y-2"
+      >
+        <h2 class="text-lg font-semibold">
+          Products ({{ products.length }}):
+        </h2>
         <div class="bg-gray-50 p-4 rounded border max-h-96 overflow-y-auto">
           <pre class="text-sm">{{ JSON.stringify(products, null, 2) }}</pre>
         </div>
@@ -51,14 +68,16 @@ export default defineComponent({
     const fetchProducts = async (): Promise<void> => {
       loading.value = true
       error.value = ''
-      
+
       try {
         const response: AxiosResponse<Product[]> = await $api.get('/products')
         products.value = response.data
-      } catch (err: any) {
-        console.log(err);
-      } finally {
-        loading.value = false;
+      }
+      catch (err: any) {
+        console.log(err)
+      }
+      finally {
+        loading.value = false
       }
     }
 
@@ -72,8 +91,8 @@ export default defineComponent({
       loading,
       error,
       fetchProducts,
-      clearProducts
+      clearProducts,
     }
-  }
+  },
 })
 </script>

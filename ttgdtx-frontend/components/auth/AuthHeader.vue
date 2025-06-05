@@ -5,8 +5,8 @@
     </h1>
     <p class="text-gray-600">
       {{ description }}
-      <Button
-        variant="link"
+      <Button 
+        variant="link" 
         class="p-0 h-auto font-normal text-blue-600 hover:text-blue-800 underline"
         @click="$emit('linkClick')"
       >

@@ -113,7 +113,7 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
 import { Loader } from 'lucide-vue-next'
-import { useNuxtApp, useRouter } from 'nuxt/app'
+import { useCookie, useNuxtApp, useRouter } from 'nuxt/app'
 import type { AxiosInstance, AxiosResponse } from 'axios'
 
 // Types
@@ -167,9 +167,11 @@ const onSubmit = handleSubmit(async (values: LoginFormData) => {
 
     // Handle successful login
     if (response.data) {
-      // Store authentication data if needed
-      // Example: await $auth.setUser(response.data.user)
-      // Example: await $auth.setToken(response.data.token)
+      // Store tokens and userId in secure cookies
+      useCookie('accessToken', { secure: true }).value = response.data.accessToken
+      useCookie('refreshToken', { secure: true }).value = response.data.refreshToken
+      useCookie('userId', { secure: true }).value = response.data.userId
+
       router.push('/')
     }
   }

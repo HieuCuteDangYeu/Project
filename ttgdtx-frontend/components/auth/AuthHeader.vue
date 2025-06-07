@@ -20,7 +20,7 @@
 interface Props {
   title: string
   description: string
-  linkText: string
+  linkText?: string
 }
 
 defineProps<Props>()

@@ -1,108 +1,112 @@
 <template>
   <NuxtLayout name="auth">
-    <!-- Header -->
-    <AuthHeader
-      title="Sign in to your CNN account"
-      description="Don't have an account?"
-      link-text="Sign up"
-      @link-click="handleSignUp"
+    <!-- Password Reset Modal -->
+    <AuthPasswordResetModal
+      v-if="showPasswordResetModal"
+      :open="showPasswordResetModal"
+      @update:open="handleUpdateOpen"
     />
-
-    <!-- Login Form -->
-    <form
-      class="space-y-4"
-      @submit="onSubmit"
-    >
-      <!-- Email Input -->
-      <AuthInput
-        id="email"
-        v-model="email"
-        label="Email address"
-        placeholder="Email address"
-        type="email"
-        :error="errors.email"
+    <div v-else>
+      <!-- Header -->
+      <AuthHeader
+        title="Sign in to your CNN account"
+        description="Don't have an account?"
+        link-text="Sign up"
+        @link-click="handleSignUp"
       />
 
-      <!-- Password Input -->
-      <AuthInput
-        id="password"
-        v-model="password"
-        label="Password"
-        placeholder="Password"
-        type="password"
-        :error="errors.password"
-      />
-
-      <!-- Forgot Password -->
-      <div class="text-left">
-        <Button
-          type="button"
-          variant="link"
-          class="p-0 h-auto font-normal text-blue-600 hover:text-blue-800 underline"
-          @click="handleForgotPassword"
-        >
-          Forgot password?
-        </Button>
-      </div>
-
-      <!-- Sign In Button -->
-      <Button
-        type="submit"
-        class="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
-        :disabled="isLoading"
+      <!-- Login Form -->
+      <form
+        class="space-y-4"
+        @submit="onSubmit"
       >
-        <Loader
-          v-if="isLoading"
-          class="h-4 w-4 mr-2 animate-spin"
+        <!-- Email Input -->
+        <AuthInput
+          id="email"
+          v-model="email"
+          label="Email address"
+          placeholder="Email address"
+          type="email"
+          :error="errors.email"
         />
-        {{ isLoading ? 'Signing in...' : 'Sign In' }}
-      </Button>
-    </form>
 
-    <!-- Divider -->
-    <AuthDivider />
+        <!-- Password Input -->
+        <AuthInput
+          id="password"
+          v-model="password"
+          label="Password"
+          placeholder="Password"
+          type="password"
+          :error="errors.password"
+        />
 
-    <!-- Social Login Buttons -->
-    <AuthSocialLoginButtons
-      @google-login="handleGoogleLogin"
-      @apple-login="handleAppleLogin"
-    />
+        <!-- Forgot Password -->
+        <div class="text-left">
+          <Button
+            type="button"
+            variant="link"
+            class="p-0 h-auto font-normal text-blue-600 hover:text-blue-800 underline"
+            @click="handleForgotPassword"
+          >
+            Forgot password?
+          </Button>
+        </div>
 
-    <!-- Terms and Privacy -->
-    <div class="mt-6 text-xs text-gray-500 text-center leading-relaxed">
-      By signing up or signing in, you agree to our
-      <Button
-        variant="link"
-        class="p-0 h-auto text-xs underline text-blue-600 hover:text-blue-800"
-        @click="handleTermsClick"
-      >
-        Terms of Use
-      </Button>
-      and have read our
-      <Button
-        variant="link"
-        class="p-0 h-auto text-xs underline text-blue-600 hover:text-blue-800"
-        @click="handlePrivacyClick"
-      >
-        Privacy Policy
-      </Button>
-      . CNN and its
-      <Button
-        variant="link"
-        class="p-0 h-auto text-xs underline text-blue-600 hover:text-blue-800"
-        @click="handleAffiliatesClick"
-      >
-        affiliates
-      </Button>
-      may use your email address to send updates, ads, and offers. Opt out via
-      <Button
-        variant="link"
-        class="p-0 h-auto text-xs underline text-blue-600 hover:text-blue-800"
-        @click="handlePrivacyClick"
-      >
-        Privacy Policy
-      </Button>
-      .
+        <!-- Sign In Button -->
+        <AuthLoadingButton
+          :text="'Sign in'"
+          :loading-text="'Signing in...'"
+          :loading="isLoading"
+          class="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
+          type="submit"
+        />
+      </form>
+
+      <!-- Divider -->
+      <AuthDivider />
+
+      <!-- Social Login Buttons -->
+      <AuthSocialLoginButtons
+        @google-login="handleGoogleLogin"
+        @apple-login="handleAppleLogin"
+      />
+
+      <!-- Terms and Privacy -->
+      <div class="mt-6 text-xs text-gray-500 text-center leading-relaxed">
+        By signing up or signing in, you agree to our
+        <Button
+          variant="link"
+          class="p-0 h-auto text-xs underline text-blue-600 hover:text-blue-800"
+          @click="handleTermsClick"
+        >
+          Terms of Use
+        </Button>
+        and have read our
+        <Button
+          variant="link"
+          class="p-0 h-auto text-xs underline text-blue-600 hover:text-blue-800"
+          @click="handlePrivacyClick"
+        >
+          Privacy Policy
+        </Button>
+        . CNN and its
+        <Button
+          variant="link"
+          class="p-0 h-auto text-xs underline text-blue-600 hover:text-blue-800"
+          @click="handleAffiliatesClick"
+        >
+          affiliates
+        </Button>
+        may use your email address to send updates, ads, and offers. Opt out via
+        <Button
+          variant="link"
+          class="p-0 h-auto text-xs underline text-blue-600 hover:text-blue-800"
+          @click="handlePrivacyClick"
+        >
+          Privacy Policy
+        </Button>
+        .
+      </div>
     </div>
   </NuxtLayout>
 </template>
@@ -112,7 +116,6 @@ import { ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
-import { Loader } from 'lucide-vue-next'
 import { useCookie, useNuxtApp, useRouter } from 'nuxt/app'
 import type { AxiosInstance, AxiosResponse } from 'axios'
 
@@ -150,6 +153,7 @@ const [password] = defineField('password')
 
 // UI state
 const isLoading = ref(false)
+const showPasswordResetModal = ref(false)
 
 const router = useRouter()
 
@@ -189,8 +193,11 @@ const handleSignUp = (): void => {
 }
 
 const handleForgotPassword = (): void => {
-  console.log('Navigate to forgot password')
-  alert('Navigate to forgot password page')
+  showPasswordResetModal.value = true
+}
+
+const handleUpdateOpen = (open: boolean): void => {
+  showPasswordResetModal.value = open
 }
 
 // Social login handlers

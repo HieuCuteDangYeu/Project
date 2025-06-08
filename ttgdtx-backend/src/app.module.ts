@@ -9,6 +9,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { RolesModule } from './roles/roles.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { RolesModule } from './roles/roles.module';
       inject: [ConfigService],
     }),
     RolesModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

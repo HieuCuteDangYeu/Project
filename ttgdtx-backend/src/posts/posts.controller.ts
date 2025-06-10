@@ -7,42 +7,50 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
+import { PaginationQueryDto } from './dto/pagination-query.dto';
+import { AuthorizationGuard } from 'src/guards/authorization.guard';
+import { Permissions } from 'src/decorators/permissions.decorator';
+import { Resource } from 'src/roles/enums/resource.enum';
+import { Action } from 'src/roles/enums/action.enum';
 
+@UseGuards(AuthenticationGuard, AuthorizationGuard)
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @UseGuards(AuthenticationGuard)
   @Post()
+  @Permissions([{ resource: Resource.posts, actions: [Action.create] }])
   create(@Body() createPostDto: CreatePostDto) {
     return this.postsService.create(createPostDto);
   }
 
-  @UseGuards(AuthenticationGuard)
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  @Permissions([{ resource: Resource.posts, actions: [Action.read] }])
+  findAll(@Query() paginationQuery: PaginationQueryDto) {
+    const { page = 1, limit = 10 } = paginationQuery;
+    return this.postsService.findAll({ page, limit });
   }
 
-  @UseGuards(AuthenticationGuard)
   @Get(':id')
+  @Permissions([{ resource: Resource.posts, actions: [Action.read] }])
   findOne(@Param('id') id: string) {
     return this.postsService.findOne(id);
   }
 
-  @UseGuards(AuthenticationGuard)
   @Patch(':id')
+  @Permissions([{ resource: Resource.posts, actions: [Action.update] }])
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(id, updatePostDto);
   }
 
-  @UseGuards(AuthenticationGuard)
   @Delete(':id')
+  @Permissions([{ resource: Resource.posts, actions: [Action.delete] }])
   remove(@Param('id') id: string) {
     return this.postsService.remove(id);
   }

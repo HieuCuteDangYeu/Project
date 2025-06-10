@@ -1,10 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 import { Post, PostDocument } from './schemas/post.schema';
 import { User, UserDocument } from 'src/users/schemas/user.schema';
+
+export interface PaginationOptions {
+  page: number;
+  limit: number;
+}
+
+export interface PaginatedPosts {
+  data: Post[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
 
 @Injectable()
 export class PostsService {
@@ -25,12 +38,27 @@ export class PostsService {
     }
 
     const createdPost = new this.postModel(createPostDto);
-
     return createdPost.save();
   }
 
-  async findAll(): Promise<Post[]> {
-    return this.postModel.find().exec();
+  async findAll(options: PaginationOptions): Promise<PaginatedPosts> {
+    const { page, limit } = options;
+    const skip = (page - 1) * limit;
+
+    const [results, total] = await Promise.all([
+      this.postModel.find().skip(skip).limit(limit).exec(),
+      this.postModel.countDocuments().exec(),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data: results,
+      total,
+      page,
+      limit,
+      totalPages,
+    };
   }
 
   async findOne(id: string): Promise<Post> {

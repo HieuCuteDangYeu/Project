@@ -9,8 +9,11 @@ export class RolesService {
   constructor(@InjectModel(Role.name) private RoleModel: Model<Role>) {}
 
   async createRole(role: CreateRoleDto) {
-    //TODO: Validate unique names
-    return this.RoleModel.create(role);
+    const filter = { name: role.name };
+    const update = { $set: role };
+    const options = { upsert: true, new: true };
+
+    return this.RoleModel.findOneAndUpdate(filter, update, options);
   }
 
   async getRoleById(roleId: string) {

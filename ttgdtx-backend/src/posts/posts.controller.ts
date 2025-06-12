@@ -18,6 +18,8 @@ import { AuthorizationGuard } from 'src/guards/authorization.guard';
 import { Permissions } from 'src/decorators/permissions.decorator';
 import { Resource } from 'src/roles/enums/resource.enum';
 import { Action } from 'src/roles/enums/action.enum';
+import { MongoIdPipe } from 'src/pipes/mongo-id.pipe';
+import mongoose from 'mongoose';
 
 @UseGuards(AuthenticationGuard, AuthorizationGuard)
 @Controller('posts')
@@ -39,19 +41,22 @@ export class PostsController {
 
   @Get(':id')
   @Permissions([{ resource: Resource.posts, actions: [Action.read] }])
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
     return this.postsService.findOne(id);
   }
 
   @Patch(':id')
   @Permissions([{ resource: Resource.posts, actions: [Action.update] }])
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+  update(
+    @Param('id', MongoIdPipe) id: mongoose.Types.ObjectId,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
     return this.postsService.update(id, updatePostDto);
   }
 
   @Delete(':id')
   @Permissions([{ resource: Resource.posts, actions: [Action.delete] }])
-  remove(@Param('id') id: string) {
+  remove(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
     return this.postsService.remove(id);
   }
 }

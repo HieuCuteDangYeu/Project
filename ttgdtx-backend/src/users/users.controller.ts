@@ -11,13 +11,13 @@ import {
 import { UsersService } from './users.service';
 import { Types } from 'mongoose';
 import { MongoIdPipe } from 'src/pipes/mongo-id.pipe';
-import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
 import { AuthorizationGuard } from 'src/guards/authorization.guard';
 import { Action } from 'src/roles/enums/action.enum';
 import { Resource } from 'src/roles/enums/resource.enum';
 import { Permissions } from 'src/decorators/permissions.decorator';
+import { PaginationQueryDto } from 'src/common/pagination-query.dto';
 
 @UseGuards(AuthenticationGuard, AuthorizationGuard)
 @Controller('users')

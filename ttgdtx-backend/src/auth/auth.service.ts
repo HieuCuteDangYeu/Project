@@ -187,7 +187,7 @@ export class AuthService {
 
     if (!user) throw new BadRequestException();
 
-    const role = await this.rolesService.getRoleById(user.roleId.toString());
+    const role = await this.rolesService.findOne(user.roleId);
     return role?.permissions;
   }
 }

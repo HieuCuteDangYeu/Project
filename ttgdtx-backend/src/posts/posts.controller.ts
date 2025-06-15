@@ -13,13 +13,13 @@ import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthenticationGuard } from 'src/guards/authentication.guard';
-import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { AuthorizationGuard } from 'src/guards/authorization.guard';
 import { Permissions } from 'src/decorators/permissions.decorator';
 import { Resource } from 'src/roles/enums/resource.enum';
 import { Action } from 'src/roles/enums/action.enum';
 import { MongoIdPipe } from 'src/pipes/mongo-id.pipe';
 import mongoose from 'mongoose';
+import { PaginationQueryDto } from 'src/common/pagination-query.dto';
 
 @UseGuards(AuthenticationGuard, AuthorizationGuard)
 @Controller('posts')

@@ -57,4 +57,9 @@ export class AuthController {
       resetPasswordDto.resetToken,
     );
   }
+
+  @Post('logout')
+  async logout(@Body('refreshToken') refreshToken: string) {
+    return this.authService.logout(refreshToken);
+  }
 }

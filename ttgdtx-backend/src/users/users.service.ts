@@ -25,4 +25,14 @@ export class UsersService extends BaseService<UserDocument> {
       }
     }
   }
+
+  async getSessionInfo(userId: Types.ObjectId) {
+    const user = await this.userModel
+      .findById(userId)
+      .select('name email role');
+    if (!user) throw new BadRequestException('User not found');
+    return {
+      user,
+    };
+  }
 }

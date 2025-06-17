@@ -69,12 +69,11 @@ export class AuthService {
     const tokens = await this.generateUserTokens(user._id);
     return {
       ...tokens,
-      userId: user._id,
     };
   }
 
   async generateUserTokens(userId: mongoose.Types.ObjectId) {
-    const accessToken = this.jwtService.sign({ userId }, { expiresIn: '1h' });
+    const accessToken = this.jwtService.sign({ userId }, { expiresIn: '15m' });
     const refreshToken = uuidv4();
 
     await this.storeRefreshToken(refreshToken, userId);
@@ -189,5 +188,15 @@ export class AuthService {
 
     const role = await this.rolesService.findOne(user.roleId);
     return role?.permissions;
+  }
+
+  async logout(refreshToken: string) {
+    const result = await this.RefreshTokenModel.findOneAndDelete({
+      token: refreshToken,
+    });
+    if (!result) {
+      throw new BadRequestException('Invalid refresh token');
+    }
+    return { message: 'Logged out successfully' };
   }
 }

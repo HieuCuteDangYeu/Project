@@ -123,6 +123,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'guest',
+})
+
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
@@ -130,10 +134,6 @@ import { Loader } from 'lucide-vue-next'
 import { useNuxtApp, useRouter } from 'nuxt/app'
 import type { AxiosInstance } from 'axios'
 import { ref } from 'vue'
-
-definePageMeta({
-  middleware: 'guest',
-})
 
 interface SignupRequest {
   name: string

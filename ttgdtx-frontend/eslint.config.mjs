@@ -2,9 +2,10 @@ import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['**/*.vue', '**/*.ts', '**/*.tsx'],
     rules: {
       'no-console': 'off',
+      'import/first': 'off',
     },
   },
 )

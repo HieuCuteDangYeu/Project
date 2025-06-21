@@ -112,16 +112,16 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'guest',
+})
+
 import { ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
 import { useRouter } from 'nuxt/app'
 import { useAuth } from '../composables/useAuth'
-
-definePageMeta({
-  middleware: 'guest',
-})
 
 // Validation schema
 const loginSchema = z.object({

@@ -43,6 +43,10 @@ import { useForm } from 'vee-validate'
 import { ref } from 'vue'
 import z from 'zod'
 
+definePageMeta({
+  middleware: 'guest',
+})
+
 interface ResetRequest {
   newPassword: string
   resetToken: string
@@ -85,7 +89,6 @@ const onSubmit = handleSubmit(async (values: ResetPasswordFormData) => {
       newPassword: values.password,
       resetToken: token,
     }
-    console.log(resetData)
 
     await $api.put('/auth/reset-password', resetData)
     router.push('/login')

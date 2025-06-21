@@ -131,6 +131,10 @@ import { useNuxtApp, useRouter } from 'nuxt/app'
 import type { AxiosInstance } from 'axios'
 import { ref } from 'vue'
 
+definePageMeta({
+  middleware: 'guest',
+})
+
 interface SignupRequest {
   name: string
   email: string
@@ -201,16 +205,8 @@ const onSubmit = handleSubmit(async (values: SignupFormData) => {
       password: values.password,
     }
 
-    // Call signup API
     await $api.post('/auth/signup', signupData)
-
-    // Handle successful signup
-    // Store authentication data if needed
-    // Example: await $auth.setUser(response.data.user)
-    // Example: await $auth.setToken(response.data.accessToken)
-
-    // Show success message or redirect
-    router.push('/')
+    router.push('/login')
   }
   catch (error: unknown) {
     console.log(error)

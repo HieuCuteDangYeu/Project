@@ -19,6 +19,10 @@ import { defineComponent, ref, type Ref } from 'vue'
 import { useNuxtApp } from 'nuxt/app'
 import type { AxiosResponse, AxiosInstance } from 'axios'
 
+definePageMeta({
+  middleware: 'auth',
+})
+
 interface Product {
   id: number
   name: string

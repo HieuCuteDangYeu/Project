@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -20,10 +19,6 @@ import { Resource } from 'src/roles/enums/resource.enum';
 import { Permissions } from 'src/decorators/permissions.decorator';
 import { PaginationQueryDto } from 'src/common/pagination-query.dto';
 
-interface AuthenticatedRequest extends Request {
-  userId: Types.ObjectId;
-}
-
 @UseGuards(AuthenticationGuard, AuthorizationGuard)
 @Controller('users')
 export class UsersController {
@@ -34,12 +29,6 @@ export class UsersController {
   findAll(@Query() paginationQuery: PaginationQueryDto) {
     const { page = 1, limit = 10 } = paginationQuery;
     return this.usersService.findAll({ page, limit });
-  }
-
-  @Get('session')
-  @Permissions([{ resource: Resource.users, actions: [Action.read] }])
-  async getSession(@Req() req: AuthenticatedRequest) {
-    return await this.usersService.getSessionInfo(req.userId);
   }
 
   @Get(':id')

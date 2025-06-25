@@ -116,15 +116,12 @@ import { ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
-import { useCookie, useNuxtApp, useRouter } from 'nuxt/app'
-import type { AxiosInstance, AxiosResponse } from 'axios'
+import { useRouter } from 'nuxt/app'
+import { useAuth } from '../composables/useAuth'
 
-// Types
-interface AuthResponse {
-  accessToken: string
-  refreshToken: string
-  userId: string
-}
+definePageMeta({
+  middleware: 'guest',
+})
 
 // Validation schema
 const loginSchema = z.object({
@@ -161,23 +158,9 @@ const onSubmit = handleSubmit(async (values: LoginFormData) => {
   isLoading.value = true
 
   try {
-    const $api = useNuxtApp().$api as AxiosInstance
-
-    // Call authentication API
-    const response: AxiosResponse<AuthResponse> = await $api.post('/auth/login', {
-      email: values.email,
-      password: values.password,
-    })
-
-    // Handle successful login
-    if (response.data) {
-      // Store tokens and userId in secure cookies
-      useCookie('accessToken', { secure: true }).value = response.data.accessToken
-      useCookie('refreshToken', { secure: true }).value = response.data.refreshToken
-      useCookie('userId', { secure: true }).value = response.data.userId
-
-      router.push('/')
-    }
+    const { login } = useAuth()
+    await login({ email: values.email, password: values.password })
+    await router.push('/')
   }
   catch (error: unknown) {
     console.log(error)

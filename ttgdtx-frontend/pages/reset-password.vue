@@ -36,6 +36,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'guest',
+})
+
 import { toTypedSchema } from '@vee-validate/zod'
 import type { AxiosInstance } from 'axios'
 import { useNuxtApp, useRoute, useRouter } from 'nuxt/app'
@@ -85,7 +89,6 @@ const onSubmit = handleSubmit(async (values: ResetPasswordFormData) => {
       newPassword: values.password,
       resetToken: token,
     }
-    console.log(resetData)
 
     await $api.put('/auth/reset-password', resetData)
     router.push('/login')

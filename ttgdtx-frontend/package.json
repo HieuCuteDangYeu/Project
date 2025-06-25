@@ -14,16 +14,17 @@
   "dependencies": {
     "@internationalized/date": "^3.8.1",
     "@tailwindcss/vite": "^4.1.8",
-    "axios": "^1.9.0",
     "@tanstack/vue-table": "^8.21.3",
     "@vee-validate/zod": "^4.15.0",
     "@vueuse/core": "^13.3.0",
     "@vueuse/motion": "^3.0.3",
+    "axios": "^1.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-vue-next": "^0.512.0",
     "nuxt": "^3.17.4",
+    "nuxt-auth-utils": "^0.5.20",
     "radix-vue": "^1.9.17",
     "reka-ui": "^2.3.0",
     "shadcn-nuxt": "^2.2.0",
@@ -35,12 +36,12 @@
     "zod": "^3.25.51"
   },
   "devDependencies": {
+    "@nuxt/eslint": "^1.4.1",
     "@tailwindcss/typography": "^0.5.16",
     "autoprefixer": "^10.4.21",
+    "eslint": "^9.28.0",
     "postcss": "^8.5.4",
     "tailwindcss": "^4.1.8",
-    "@nuxt/eslint": "^1.4.1",
-    "eslint": "^9.28.0",
     "typescript": "^5.8.3"
   }
 }

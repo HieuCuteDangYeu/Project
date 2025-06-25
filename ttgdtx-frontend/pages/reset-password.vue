@@ -36,16 +36,16 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  middleware: 'guest',
-})
-
 import { toTypedSchema } from '@vee-validate/zod'
 import type { AxiosInstance } from 'axios'
 import { useNuxtApp, useRoute, useRouter } from 'nuxt/app'
 import { useForm } from 'vee-validate'
 import { ref } from 'vue'
 import z from 'zod'
+
+definePageMeta({
+  middleware: 'guest',
+})
 
 interface ResetRequest {
   newPassword: string

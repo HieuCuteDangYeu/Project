@@ -15,10 +15,6 @@
 </template>
 
 <script lang="ts">
-definePageMeta({
-  middleware: 'auth',
-})
-
 import { defineComponent, ref, type Ref } from 'vue'
 import { useNuxtApp } from 'nuxt/app'
 import type { AxiosResponse, AxiosInstance } from 'axios'
